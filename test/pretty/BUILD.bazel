@@ -15,7 +15,7 @@ DEPS_1 = [
 ]
 
 test_suite(
-    name  = "pretty_test",
+    name  = "all",
     tests = [
         ":atd.diff_test",
         ":test.diff_test"
@@ -72,12 +72,12 @@ genrule(
     outs  = [
         "test.output.json"
     ],
-    name  = "__test.output__",
+    name  = "__test.output.json__",
     srcs  = [
         ":sample.json"
     ],
     cmd   = " ".join([
-        "cp $(locations :sample.json) . ;",
+        "cp $(location :sample.json) . ;",  ## hack
         "$(execpath :test.exe)",
         "> $@"
     ]),
