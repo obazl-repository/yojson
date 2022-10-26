@@ -1,10 +1,10 @@
 ## replace /Users/gar/obazl with abs path to your local repos as needed
-common --override_repository=rules_ocaml=/Users/gar/obazl/rules_ocaml
-common --override_repository=opam=/Users/gar/obazl/tools_opam
-common --override_repository=obazl=/Users/gar/obazl/tools_obazl
-common --override_repository=mibl=/Users/gar/obazl/mibl
-common --override_repository=libs7=/Users/gar/obazl/libs7
-common --override_repository=rules_jsoo=/Users/gar/obazl/rules_jsoo
+# common --override_repository=rules_ocaml=/Users/gar/obazl/rules_ocaml
+# common --override_repository=opam=/Users/gar/obazl/tools_opam
+# common --override_repository=obazl=/Users/gar/obazl/tools_obazl
+# common --override_repository=mibl=/Users/gar/obazl/mibl
+# common --override_repository=libs7=/Users/gar/obazl/libs7
+# common --override_repository=rules_jsoo=/Users/gar/obazl/rules_jsoo
 
 common:show --subcommands=pretty_print
 common:show --verbose_failures

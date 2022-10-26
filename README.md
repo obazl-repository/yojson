@@ -1,6 +1,50 @@
 Yojson: JSON library for OCaml
 ==============================
 
+**WARNING** This is a Bazelized fork of the Yojson library.
+
+Quickstart:
+
+1. Install [OPAM](https://opam.ocaml.org/).
+2. Configure an OPAM switch:
+
+   a. `$ opam init`
+
+   b. `$ opam switch create 4.14.0`
+
+3. Install OPAM dependencies of this project:
+
+   * `$ opam install alcotest`
+
+   * `$ opam install cppo`
+
+   * `$ opam install seq`
+
+4. (optional) To run benchmarks:
+
+    * `$ opam install core`
+
+    * `$ opam install core_bench`
+
+4. Configure an OBazl "coswitch":
+
+    * `$ bazel run @obazl//coswitch`
+
+Now you should be able to build with Bazel:
+
+* `$ bazel build lib:yojson`
+
+and run tests:
+
+* `$ bazel test test:yojson_test`
+* `$ bazel test test/pretty:pretty_test`
+
+etc.
+
+Original README.md follows:
+
+==============================
+
 [![Build Status](https://img.shields.io/endpoint?url=https%3A%2F%2Fci.ocamllabs.io%2Fbadge%2Focaml-community%2Fyojson%2Fmaster&logo=ocaml)](https://ci.ocamllabs.io/github/ocaml-community/yojson)
 
 This library parses JSON data into a nested OCaml tree data structure.

@@ -26,7 +26,7 @@ def fetch_repos():
 
     maybe(
         http_archive,
-        name = "opam",  ## do not change name
+        name = "opam",
         url = "https://github.com/obazl/tools_opam/archive/refs/tags/v2.0.0-alpha-1.tar.gz",
         sha256 = "c0772de1319b6c2eae0144dab1047d91b9fb4e7bfc43beebe771c5e7071fc8c0",
         strip_prefix = "tools_opam-2.0.0-alpha-1"
