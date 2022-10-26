@@ -1,0 +1,58 @@
+package(default_visibility = ["//visibility:public"])
+
+load("@rules_ocaml//build:rules.bzl",
+     "ocaml_binary",
+     "ocaml_exec_module",
+     "ocaml_test"
+)
+
+DEPS_1 = [
+    "//lib:yojson"
+]
+
+OPTS_1 = [
+        "-safe-string"
+]
+
+test_suite(
+    name  = "test",
+    tests = [
+        ":constructing_test",
+        ":filtering_test"
+    ]
+)
+
+##############################
+sh_test(
+    name     = "filtering_test",
+    srcs     = ["filtering_test.sh"],
+    data     = ["filtering.exe", ":filtering.json"],
+    visibility = ["//visibility:public"],
+)
+
+ocaml_binary(
+    name     = "filtering.exe",
+    main     = ":Filtering",
+    visibility = ["//visibility:public"],
+)
+
+ocaml_exec_module(
+    name          = "Filtering",
+    struct        = "filtering.ml",
+    opts          = OPTS_1,
+    deps          = DEPS_1,
+)
+
+##############################
+ocaml_test(
+    name     = "constructing_test",
+    main     = ":Constructing",
+    visibility = ["//visibility:public"],
+)
+
+ocaml_exec_module(
+    name          = "Constructing",
+    struct        = "constructing.ml",
+    opts          = OPTS_1,
+    deps          = DEPS_1,
+)

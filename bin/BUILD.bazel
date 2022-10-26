@@ -1,0 +1,34 @@
+package(default_visibility = ["//visibility:public"])
+
+load("@rules_ocaml//build:rules.bzl",
+     "ocaml_binary",
+     "ocaml_library",
+     "ocaml_ns_library",
+     "ocaml_exec_module",
+     "ocaml_module",
+)
+
+DEPS_1 = [
+    "//lib:yojson"
+]
+
+OPTS_1 = [
+        "-safe-string"
+]
+
+##############################
+####  Executable Targets  ####
+ocaml_binary(
+    name     = "ydump.exe",
+    main     = ":Ydump",
+    visibility = ["//visibility:public"],
+)
+
+ocaml_exec_module(
+    name          = "Ydump",
+    struct        = "ydump.ml",
+    opts          = OPTS_1,
+    deps          = DEPS_1,
+)
+
+######################## Modules & Signatures ########################

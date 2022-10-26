@@ -1,0 +1,7 @@
+##########
+filegroup(
+    name = "glob_STAR",
+    srcs = glob(["*"]),
+    visibility = ["//test/compliance:__pkg__"]
+)
+

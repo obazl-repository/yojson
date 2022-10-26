@@ -1,0 +1,75 @@
+package(default_visibility = ["//visibility:public"])
+
+load("@rules_ocaml//build:rules.bzl",
+     "ocaml_module",
+     "ocaml_exec_module",
+     "ocaml_test",
+)
+
+DEPS_TEST = [
+    "//lib:yojson",
+    "@opam_alcotest//lib/alcotest"
+]
+
+
+##############################
+####  Test Targets  ####
+ocaml_test(
+    name     = "yojson_test",
+    main = "Test",
+    visibility = ["//visibility:public"],
+)
+
+######################## Modules & Signatures ########################
+ocaml_exec_module(
+    name          = "Test",
+    struct        = "test.ml",
+    deps          = DEPS_TEST + [
+        ":Test_monomorphic",
+        ":Test_read",
+        ":Test_write"
+    ],
+)
+
+ocaml_module(
+    name          = "Fixtures",
+    struct        = "fixtures.ml",
+    sig           = "fixtures.mli",
+    deps          = DEPS_TEST,
+)
+
+ocaml_module(
+    name          = "Test_monomorphic",
+    struct        = "test_monomorphic.ml",
+    sig           = "test_monomorphic.mli",
+    deps          = DEPS_TEST + [
+        ":Testable"
+    ],
+)
+
+ocaml_module(
+    name          = "Test_read",
+    struct        = "test_read.ml",
+    sig           = "test_read.mli",
+    deps          = DEPS_TEST + [
+        ":Fixtures",
+        ":Testable"
+    ],
+)
+
+ocaml_module(
+    name          = "Test_write",
+    struct        = "test_write.ml",
+    sig           = "test_write.mli",
+    deps          = DEPS_TEST + [
+        ":Fixtures",
+        ":Testable"
+    ],
+)
+
+ocaml_module(
+    name          = "Testable",
+    struct        = "testable.ml",
+    sig           = "testable.mli",
+    deps          = DEPS_TEST,
+)

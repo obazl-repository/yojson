@@ -1,0 +1,103 @@
+package(default_visibility = ["//visibility:public"])
+
+load("@rules_ocaml//build:rules.bzl",
+     "ocaml_archive",
+     "ocaml_ns_archive",
+     "ocamllex",
+     "ocaml_module",
+     "ocaml_signature",
+)
+
+DEPS_1 = [
+    "@opam_seq//lib/seq"
+]
+
+OPTS_1 = [
+        "-safe-string"
+]
+
+#############################
+####  Aggregate Targets  ####
+
+#################
+ocaml_archive(  #0
+    name       = "yojson",
+    manifest = [
+        ":Yojson"
+    ],
+)
+
+######################## Modules & Signatures ########################
+ocaml_module(
+    name          = "Yojson",
+    struct        = "yojson.ml",
+    opts          = OPTS_1,
+    deps          = DEPS_1,
+)
+
+########################
+####  File Generators  ####
+
+##########
+ocamllex(
+    name  = "lex_Read",
+    src   = "read.mll",
+    out   = "read.ml",
+)
+###########
+genrule(
+    outs  = [
+        "yojson.ml"
+    ],
+    name  = "__yojson.ml__",
+    srcs  = [
+        "yojson.cppo.ml",
+        "monomorphic.ml",
+        "read.ml",
+        "write.ml",
+        "safe.ml",
+        "pretty.ml",
+        "write2.ml",
+        "common.ml",
+        "util.ml",
+        "type.ml"
+    ],
+    cmd   = " ".join([
+        "$(execpath @opam_cppo//bin:cppo)",
+        "-I", "lib",
+        "-I", "$(GENDIR)/lib",
+        "$(location yojson.cppo.ml)",
+        "-o",
+        "$(location yojson.ml)"
+    ]),
+    exec_tools = ["@opam_cppo//bin:cppo"]
+)
+
+###########
+genrule(
+    outs  = [
+        "yojson.mli"
+    ],
+    name  = "__yojson.mli__",
+    srcs  = [
+        "yojson.cppo.mli",
+        "monomorphic.mli",
+        "write.mli",
+        "read.mli",
+        "safe.mli",
+        "write2.mli",
+        "common.mli",
+        "util.mli",
+        "type.ml"
+    ],
+    cmd   = " ".join([
+        "$(execpath @opam_cppo//bin:cppo)",
+        "-I", "lib",
+        "-I", "$(GENDIR)/lib",
+        "$(location yojson.cppo.mli)",
+        "-o",
+        "$(location yojson.mli)"
+    ]),
+    exec_tools = ["@opam_cppo//bin:cppo"]
+)
+

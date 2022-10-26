@@ -1,0 +1,26 @@
+package(default_visibility = ["//visibility:public"])
+
+load("@rules_ocaml//build:rules.bzl",
+     "ocaml_exec_module",
+     "ocaml_test",
+)
+
+DEPS_1 = [
+    "@opam_alcotest//lib/alcotest",
+    "//lib:yojson"
+]
+
+##############################
+ocaml_test(
+    name = "compliance_test",
+    main = "Test",
+    data = ["//test/compliance/test_cases:glob_STAR"],
+    data_prefix_map = {"test/compliance/": ""},
+    visibility = ["//visibility:public"]
+)
+
+ocaml_exec_module(
+    name          = "Test",
+    struct        = "test.ml",
+    deps          = DEPS_1,
+)

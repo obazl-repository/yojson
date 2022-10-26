@@ -1,0 +1,103 @@
+package(default_visibility = ["//visibility:public"])
+
+load("@bazel_skylib//rules:diff_test.bzl", "diff_test")
+
+load("@rules_ocaml//build:rules.bzl",
+     "ocaml_binary",
+     "ocaml_library",
+     "ocaml_ns_library",
+     "ocaml_exec_module",
+     "ocaml_module",
+)
+
+DEPS_1 = [
+    "//lib:yojson"
+]
+
+test_suite(
+    name  = "pretty_test",
+    tests = [
+        ":atd.diff_test",
+        ":test.diff_test"
+    ]
+)
+
+##########
+diff_test(
+    name  = "test.diff_test",
+    file1  = ":test.output.json",
+    file2  = ":test.expected.json"
+)
+
+##########
+diff_test(
+    name  = "atd.diff_test",
+    file1  = ":atd.output.json",
+    file2  = ":atd.expected.json"
+)
+
+
+##############################
+####  Executable Targets  ####
+ocaml_binary(
+    name     = "test.exe",
+    main     = ":Test",
+    data            = ["sample.json"],
+    data_prefix_map = {"test/pretty/": ""},
+    visibility = ["//visibility:public"],
+)
+
+ocaml_exec_module(
+    name          = "Test",
+    struct        = "test.ml",
+    deps          = DEPS_1,
+)
+
+ocaml_binary(
+    name     = "atd.exe",
+    main     = ":Atd",
+    visibility = ["//visibility:public"],
+)
+
+ocaml_exec_module(
+    name          = "Atd",
+    struct        = "atd.ml",
+    deps          = DEPS_1,
+)
+
+############################# Genrules ##################################
+
+########
+genrule(
+    outs  = [
+        "test.output.json"
+    ],
+    name  = "__test.output__",
+    srcs  = [
+        ":sample.json"
+    ],
+    cmd   = " ".join([
+        "cp $(locations :sample.json) . ;",
+        "$(execpath :test.exe)",
+        "> $@"
+    ]),
+    exec_tools = [
+        ":test.exe"
+    ]
+)
+
+########
+genrule(
+    outs  = [
+        "atd.output.json"
+    ],
+    name  = "__atd.output.json__",
+    cmd   = " ".join([
+        "$(execpath :atd.exe)",
+        "> $@"
+    ]),
+    exec_tools = [
+        ":atd.exe"
+    ]
+)
+

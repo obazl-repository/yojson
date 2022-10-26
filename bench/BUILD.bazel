@@ -1,0 +1,56 @@
+package(default_visibility = ["//visibility:public"])
+
+load("@rules_ocaml//build:rules.bzl",
+     "ocaml_binary",
+     "ocaml_library",
+     "ocaml_ns_library",
+     "ocaml_exec_module",
+     "ocaml_module",
+)
+
+DEPS_1 = [
+    "//lib:yojson",
+    "@opam_core_bench//lib/core_bench",
+    "@opam_core//lib/core"
+]
+
+OPTS_1 = [
+        "-safe-string"
+]
+
+##############################
+####  Executable Targets  ####
+ocaml_binary(
+    name     = "bench.exe",
+    main     = ":Bench",
+    visibility = ["//visibility:public"],
+)
+
+ocaml_exec_module(
+    name          = "Bench",
+    struct        = "bench.ml",
+    opts          = OPTS_1,
+    deps          = DEPS_1,
+)
+
+######################## Modules & Signatures ########################
+############################# Rules ##################################
+
+########
+genrule(
+    outs  = [
+    ],
+    name  = "bench.json",
+    srcs  = [
+        ":bench.json"
+    ],
+    cmd   = " ".join([
+        "cp $(locations :bench.json) . ;",
+        "$(execpath bench.exe)",
+
+    ]),
+    exec_tools = [
+        "bench.exe"
+    ]
+)
+
