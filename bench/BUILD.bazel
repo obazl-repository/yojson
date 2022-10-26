@@ -2,16 +2,16 @@ package(default_visibility = ["//visibility:public"])
 
 load("@rules_ocaml//build:rules.bzl",
      "ocaml_binary",
-     "ocaml_library",
-     "ocaml_ns_library",
      "ocaml_exec_module",
-     "ocaml_module",
 )
 
 DEPS_1 = [
-    "//lib:yojson",
+    "@opam_yojson//lib/yojson",
     "@opam_core_bench//lib/core_bench",
-    "@opam_core//lib/core"
+    "@opam_core//lib/core",
+    "@opam_core_unix//lib/command_unix",
+    "@opam_core_bench//lib/internals",
+    "@opam_sexplib//lib/sexplib"
 ]
 
 OPTS_1 = [
@@ -23,6 +23,8 @@ OPTS_1 = [
 ocaml_binary(
     name     = "bench.exe",
     main     = ":Bench",
+    data     = ["bench.json"],
+    data_prefix_map = {"bench/": ""},
     visibility = ["//visibility:public"],
 )
 
@@ -33,24 +35,90 @@ ocaml_exec_module(
     deps          = DEPS_1,
 )
 
+ocaml_binary(
+    name     = "conversions.exe",
+    main     = ":Conversions",
+    visibility = ["//visibility:public"],
+)
+
+ocaml_exec_module(
+    name          = "Conversions",
+    struct        = "conversions.ml",
+    opts          = OPTS_1,
+    deps          = DEPS_1,
+)
+
 ######################## Modules & Signatures ########################
 ############################# Rules ##################################
 
 ########
 genrule(
-    outs  = [
-    ],
-    name  = "bench.json",
-    srcs  = [
-        ":bench.json"
-    ],
+    name  = "bench-generic",
+    outs  = ["bench-generic.output"],
+    srcs  = ["bench.json"],
     cmd   = " ".join([
-        "cp $(locations :bench.json) . ;",
-        "$(execpath bench.exe)",
+        "cp $(location :bench.json) .;",
+        "$(execpath :bench.exe)",
+        "generic",
+        "|",
+        "tee",
+        "$@"
+    ]),
+    exec_tools = ["bench.exe"]
+)
 
+########
+genrule(
+    name  = "bench-generic-sexp",
+    outs  = ["bench-generic-sexp.output"],
+    srcs  = [":bench.json"],
+    cmd   = " ".join([
+        "cp $(location :bench.json) .;",
+        "$(execpath :bench.exe)",
+        "generic", "-sexp",
+        "|", # "tee", "$@",
+        "$(execpath :conversions.exe)",
+        "--", "generic",
+        "> $@"
     ]),
     exec_tools = [
-        "bench.exe"
+        "bench.exe",
+        "conversions.exe"
     ]
 )
+
+########
+genrule(
+    name  = "bench-buffer",
+    outs  = ["bench-buffer.output"],
+    srcs  = ["bench.json"],
+    cmd   = " ".join([
+        "cp $(location :bench.json) .;",
+        "$(execpath //bench:bench.exe)",
+        "buffer",
+        "> $@"
+    ]),
+    exec_tools = ["bench.exe"]
+)
+
+########
+genrule(
+    name  = "bench-buffer-sexp",
+    outs  = ["bench-buffer-sexp.output"],
+    srcs  = [":bench.json"],
+    cmd   = " ".join([
+        "cp $(location :bench.json) .;",
+        "$(execpath :bench.exe)",
+        "buffer", "-sexp",
+        "|",
+        "$(execpath :conversions.exe)",
+        "-", "buffer",
+        "> $@"
+    ]),
+    exec_tools = [
+        "bench.exe",
+        "conversions.exe"
+    ]
+)
+
 
