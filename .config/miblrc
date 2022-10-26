@@ -6,9 +6,9 @@ grammar=1.0.0-BETA  ;; version number of config grammar, not obazl program
 
 [srcs]
 
-exclude = bench
+# exclude = bench
 exclude = doc
 
 ## hand-edited targets
-# exclude = lib
-# exclude = test
+exclude = lib
+exclude = test
